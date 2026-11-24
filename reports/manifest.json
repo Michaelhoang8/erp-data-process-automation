@@ -1,0 +1,26 @@
+{
+  "run_id": "49f5fb7ead5ed622412e",
+  "source_rows": 489844,
+  "accepted_rows": 489844,
+  "rejected_rows": 0,
+  "exact_repeats_retained": 2820,
+  "status": "needs_review",
+  "reused": true,
+  "latest_year": 2026,
+  "totals": {
+    "Rows": 489844,
+    "NetCents": 12143472985911,
+    "RollupRows": 120051,
+    "MissingDepartmentRows": 297388,
+    "NegativeRows": 435,
+    "LatestDatedRecord": "2026-11-20"
+  },
+  "checks": {
+    "source_row_accounting": true,
+    "annual_reconciliation": true,
+    "monthly_dated_only_reconciliation": true,
+    "vendor_reconciliation": true,
+    "department_reconciliation": true,
+    "database_row_accounting": true
+  }
+}

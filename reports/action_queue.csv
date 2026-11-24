@@ -1,0 +1,6 @@
+Finding,Rows,OwnerRole,NextAction
+Missing departments,297388,Data steward,Confirm source coverage before department comparisons
+Exact repeated records,2820,AP reviewer,Compare vouchers and source rows; do not assume duplicate payment
+Negative amounts,435,AP reviewer,Inspect signed entries before interpreting gross and net spend
+Annual rollups,120051,Analyst,Keep annual summaries out of monthly transaction counts
+Rejected records,0,Data steward,Inspect quarantined source records

@@ -1,1 +1,37 @@
-{"type":"object","required":["run_id","as_of","status","output_folder","quality_exception_count","checks","reused"],"properties":{"run_id":{"type":"string"},"as_of":{"type":"string"},"status":{"type":"string","enum":["needs_review","completed"]},"output_folder":{"type":"string"},"quality_exception_count":{"type":"integer"},"negative_stock_positions":{"type":"integer"},"reused":{"type":"boolean"},"checks":{"type":"object","additionalProperties":{"type":"boolean"}}}}
+{
+  "type": "object",
+  "required": [
+    "run_id",
+    "source_rows",
+    "accepted_rows",
+    "status",
+    "checks",
+    "reused"
+  ],
+  "properties": {
+    "run_id": {
+      "type": "string"
+    },
+    "source_rows": {
+      "type": "integer"
+    },
+    "accepted_rows": {
+      "type": "integer"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "needs_review"
+      ]
+    },
+    "checks": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "boolean"
+      }
+    },
+    "reused": {
+      "type": "boolean"
+    }
+  }
+}

@@ -1,15 +1,8 @@
-// Excel > Data > Get Data > From Other Sources > Blank Query.
-// Create text parameter ReportFolder pointing to the successful reports/runs/<run_id> directory.
-// Name this function LoadReport; then create individual queries as described in README.md.
-(ReportName as text) as table =>
+// Paste into a blank query; set ReportFolder to the local reports directory.
 let
-    Source = Csv.Document(File.Contents(ReportFolder & "/" & ReportName & ".csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
-    Headers = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
-    Integers = {"AmountCents","PaidCents","OpenCents","DaysOverdue","InvoiceCount","Orders","ReceivedOrders","OnTimeOrders","OpenOverdueOrders","ReorderPoint","UnitCostCents","OnHand","ValueCents","InvoicedCents","Line"},
-    Dates = {"PostingDate","DueDate"},
-    Types = List.Transform(Table.ColumnNames(Headers), each {_, if List.Contains(Integers,_) then Int64.Type else if List.Contains(Dates,_) then type date else type text}),
-    Typed = Table.TransformColumnTypes(Headers, Types, "en-CA"),
-    CurrencyColumns = List.Select(Table.ColumnNames(Typed), each Text.EndsWith(_,"Cents")),
-    Dollars = List.Accumulate(CurrencyColumns, Typed, (State,Column) => Table.AddColumn(State, Text.Replace(Column,"Cents","CAD"), each Record.Field(_,Column)/100, Currency.Type))
-in
-    Dollars
+ ReportFolder = "C:\path\to\erp-data-process-automation\reports",
+ Source = Csv.Document(File.Contents(ReportFolder & "\annual_summary.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+ Headers = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+ Typed = Table.TransformColumnTypes(Headers, {{"Year", Int64.Type}, {"SourceRows", Int64.Type}, {"NetCents", Int64.Type}, {"PositiveCents", Int64.Type}, {"NegativeCents", Int64.Type}, {"DirectVoucherPositiveCents", Int64.Type}, {"RollupRows", Int64.Type}, {"Vendors", Int64.Type}}),
+ NetUSD = Table.AddColumn(Typed, "NetUSD", each [NetCents] / 100, Currency.Type)
+in NetUSD

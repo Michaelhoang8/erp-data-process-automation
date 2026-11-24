@@ -1,60 +1,45 @@
-# ERP Data Analysis & Process Automation
+# Chicago Vendor-Payment Analysis & Automation
 
-A runnable portfolio project analyzing fictional ERP financial, inventory and purchasing records. It demonstrates SQL analysis, repeatable Python validation, local workflow automation, Excel import logic and a Power Automate deployment design.
+**489,844 observed payment-disclosure records.** A reproducible analysis of real public data from [City of Chicago Finance — Payments](https://data.cityofchicago.org/d/s4vu-giwb). The default reports use observed records, with no synthetic financial or operational fields.
 
-All records and findings are synthetic. No Business Central tenant was accessed. Excel queries and Power Automate setup require validation in your Microsoft environment; no XLSX or deployable flow package is included.
+![Report preview](docs/screenshots/dashboard.png)
 
+[Dashboard recording](docs/recordings/walkthrough.mp4) · [Screenshot gallery](docs/screenshots) · [Data provenance](docs/DATA_SOURCE.md)
 
-![Dashboard](docs/screenshots/dashboard.png)
+## What the project demonstrates
 
-[Recorded walkthrough](docs/recordings/walkthrough.mp4) · [Screenshot gallery](docs/screenshots) · [Capture details](docs/recordings/capture_manifest.json)
+Annual disclosures, dated monthly records, vendor-name concentration, direct-voucher share, department completeness and a reproducible exception-review queue. Exact repeated rows are retained and flagged because vouchers do not establish a unique transaction key.
 
-## Open the result
+## Run locally
 
-Open `reports/dashboard.html` in a browser. `reports/latest.json` points to the latest successful run folder, containing the management brief, report CSVs, action queue, SQLite database and exception log.
+Python 3.10+; standard library only. Compressed source snapshots are checked in, so analysis runs offline.
 
-## Reproduce
-
-Python 3.10+ with standard library only. From this folder:
-
-```powershell
-python src/generate_data.py
+```sh
+python scripts/verify_source.py
 python src/run_pipeline.py
 python -m unittest discover -s tests -v
 ```
 
-The generator deliberately replaces the six synthetic raw extracts; it is a demonstration utility. Normal reruns use only `run_pipeline.py`, preserving input files. The runner supports `--raw`, `--output` and `--as-of YYYY-MM-DD`. The local wrapper is `automation/run_local.ps1`. No schedule is installed.
+Open `reports/dashboard.html` in a browser. Generated SQLite databases are excluded from Git to keep the repository compact; running the pipeline recreates them from the full source. No sampled subset is substituted for the full extract.
 
-## Business questions
+## Excel and Microsoft assets
 
-1. How much remains payable, and which invoices are overdue?
-2. Which suppliers deliver late or have overdue open orders?
-3. Where do negative stock or low-stock positions need review?
-4. Which source defects should be corrected before reporting?
+[Download the Excel workbook](excel/Chicago_Payment_Review.xlsx). It includes annual reconciliations, the latest-year top 50 vendor names, a native chart and an editable review queue. Formula outputs and a status-change scenario were checked with the artifact workbook engine; native Microsoft Excel execution was not tested.
 
-## Outputs
+![Excel payment review](docs/screenshots/excel-annual.png)
 
-| Folder | Contents |
-|---|---|
-| data/raw | Six reproducible ERP-style CSV extracts |
-| src | Data generator and validating reporting pipeline |
-| sql | Payable aging, vendor delivery, inventory and monthly trend views |
-| reports | Browser dashboard, latest pointer, immutable successful run folders |
-| excel | Typed Power Query importer and workbook assembly instructions |
-| automation | Local PowerShell wrapper, manifest schema and cloud-flow blueprint |
-| docs | Source mapping, conventions and first-person walkthrough |
-| tests | Executable cutoff, reconciliation, duplicate and rerun tests |
+[Power Query M](excel/LoadReport.pq) and the [manifest JSON schema](automation/manifest_schema.json) are import-ready assets. [Power Automate deployment guide](automation/POWER_AUTOMATE_GUIDE.md) explains worker execution, publication and duplicate-run handling; it is not a deployable flow package. No tenant flows, assignments or notifications were created.
 
-Each successful run uses a hash of raw bytes, runner code, SQL and cutoff. Identical input returns the existing run. Changed input produces a new folder; prior runs remain available. Source exceptions are quarantined and business exceptions routed to a local action queue. A missing file or conflicting duplicate fails the run. Run serially; concurrent execution of this prototype is unsupported.
+## Analytical scope
 
-## Scope and limitations
+Older rows are vendor/contract annual summaries. The year 2002 includes 1996–2002. No invoice due dates, open balances or inventory data exist, so AP aging and stock KPIs were removed. Vendor-name variants are not resolved into legal entities; do not infer duplicate disbursements or fraud. Business Central and Power Automate are documented deployment targets, not connected services.
 
-This is management analysis, not a complete ERP or accounting ledger. The stock dataset is independent of purchase orders; no purchase-to-receipt reconciliation is claimed. Dashboard values are a static snapshot of the selected run. Raw CSV imports and cloud integrations must be adapted to real tenant field mappings. No automated messages, ERP changes, payments, real staff assignments, production deployments or measured savings are included.
+## Reviewable files
 
-## Excel workbook
+- `data/source/`: compressed full source snapshot, source URL, retrieval timestamp and checksums.
+- `src/` and `sql/`: transformations, reporting calculations and local rendering.
+- `reports/`: computed summaries, validation results and source-quality evidence.
+- `tests/`: edge-case tests for the actual source semantics.
+- `docs/`: methodology, screenshots and an automated browser walkthrough.
 
-[Download the workbook](excel/ERP_Operations_Review.xlsx) with editable review fields, named tables, formulas and an aging chart. [Workbook details and import instructions](excel/README.md).
-
-![Workbook review](docs/screenshots/excel-review.png)
-
-Microsoft assets include Power Query M, the Excel workbook and a Parse JSON schema. The Power Automate guide is a deployment blueprint, not an installed or importable flow package.
+The earlier synthetic demonstration remains in Git history. Current outputs and screenshots were rebuilt from these public sources; recordings demonstrate the reports, not a person's development session.

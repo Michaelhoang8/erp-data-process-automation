@@ -1,0 +1,12 @@
+{
+  "publisher": "City of Chicago Finance",
+  "source_page": "https://data.cityofchicago.org/d/s4vu-giwb",
+  "download_url": "https://data.cityofchicago.org/api/views/s4vu-giwb/rows.csv?accessType=DOWNLOAD",
+  "downloaded_at_utc": "2026-11-24T19:43:24.209867+00:00",
+  "original_bytes": 35411311,
+  "original_sha256": "e54fd20aa89789ec353ba851f03327e5d02bc40e319cd1a0b9fc33a7977316c2",
+  "stored_file": "chicago_payments.csv.gz",
+  "stored_sha256": "127e08f83c1018f8a91e35bd04d3d8435ecee27b70f30b984fb910a0a383baa1",
+  "units": "USD",
+  "data_type": "Observed public data, no generated rows"
+}
