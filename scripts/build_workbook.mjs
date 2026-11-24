@@ -1,0 +1,33 @@
+import fs from 'node:fs/promises';
+import {Workbook,SpreadsheetFile} from '@oai/artifact-tool';
+import {fileURLToPath} from 'node:url';
+import path from 'node:path';
+const scriptDir=path.dirname(fileURLToPath(import.meta.url));
+const root=path.resolve(scriptDir,'..');
+const data=JSON.parse(await fs.readFile(path.join(scriptDir,'erp_excel_data.json'),'utf8'));
+const wb=Workbook.create();
+const summary=wb.worksheets.add('Review'), ap=wb.worksheets.add('Payables'), stock=wb.worksheets.add('Inventory'), actions=wb.worksheets.add('Actions');
+function style(s,last,cols){s.showGridLines=false;s.getRange(`A1:${cols}${last}`).format.font={name:'Aptos',size:11,color:'#193348'};s.getRange(`A1:${cols}${last}`).format.rowHeight=24;s.getRange(`A1:${cols}${last}`).format.columnWidth=19;s.freezePanes.freezeRows(5);s.getRange(`A5:${cols}5`).format={fill:'#193348',font:{bold:true,color:'#FFFFFF'}};s.getRange('A1').format.font={size:22,bold:true,color:'#193348'};}
+ap.getRange('A1').values=[['Payables detail']];ap.getRange('A3').values=[['Source: reports/runs/<latest run>/APDetail.csv. Synthetic CAD data, 2025-12-31 cutoff.']];
+ap.getRange('A5:H5').values=[['Invoice','Vendor','Invoice CAD','Paid CAD','Open CAD','Days overdue','Aging bucket','Balance check']];
+const n=data.APDetail.length+5;
+ap.getRange(`A6:H${n}`).values=data.APDetail.map(r=>[r.InvoiceID,r.VendorID,+r.AmountCents/100,+r.PaidCents/100,null,+r.DaysOverdue,r.AgingBucket,null]);
+ap.getRange(`E6:E${n}`).formulas=data.APDetail.map((r,i)=>[`=C${i+6}-D${i+6}`]);
+ap.getRange(`H6:H${n}`).formulas=data.APDetail.map((r,i)=>[`=ROUND(E${i+6}-${+r.OpenCents/100},2)`]);
+style(ap,n,'H');ap.getRange(`C6:E${n}`).setNumberFormat('#,##0.00;(#,##0.00);"-"');ap.getRange('G:G').format.columnWidth=25;ap.tables.add(`A5:H${n}`,true,'Payables');
+stock.getRange('A1').values=[['Inventory review']];stock.getRange('A3').values=[['Source: InventoryPosition.csv. Negative quantities are retained for investigation.']];stock.getRange('A5:G5').values=[['Item','Location','On hand','Reorder point','Unit cost CAD','Value CAD','Review status']];
+const sn=data.InventoryPosition.length+5;
+stock.getRange(`A6:G${sn}`).values=data.InventoryPosition.map(r=>[r.ItemID,r.Location,+r.OnHand,+r.ReorderPoint,+r.UnitCostCents/100,null,null]);
+stock.getRange(`F6:G${sn}`).formulas=data.InventoryPosition.map((r,i)=>[`=C${i+6}*E${i+6}`,`=IF(C${i+6}<0,"Investigate negative",IF(C${i+6}<D${i+6},"Below reorder point","Within policy"))`]);
+style(stock,sn,'G');stock.getRange('G:G').format.columnWidth=28;stock.getRange(`E6:F${sn}`).setNumberFormat('#,##0.00;(#,##0.00);"-"');stock.tables.add(`A5:G${sn}`,true,'Inventory');
+actions.getRange('A1').values=[['Exception review queue']];actions.getRange('A3').values=[['Source: action_queue.csv. Status and reviewer notes are editable; no messages or payments are sent.']];actions.getRange('A5:G5').values=[['Area','Record ID','Finding','Owner role','Next action','Status','Reviewer notes']];
+const an=data.action_queue.length+5;actions.getRange(`A6:G${an}`).values=data.action_queue.map(r=>[r.Area,r.RecordID,r.Finding,r.OwnerRole,r.NextAction,'Open','']);style(actions,an,'G');actions.getRange('C:E').format.columnWidth=34;actions.getRange(`C6:E${an}`).format.wrapText=true;actions.getRange(`A6:G${an}`).format.rowHeight=48;actions.getRange(`F6:G${an}`).format.font.color='#195CBA';actions.tables.add(`A5:G${an}`,true,'ActionQueue');
+summary.getRange('A1').values=[['ERP operations review']];summary.getRange('A3').values=[['CAD · As of 2025-12-31 · Synthetic distribution dataset']];summary.getRange('A5:B5').values=[['Payable aging','Open CAD']];
+const buckets=['Current','1-30 days','31-60 days','61-90 days','90+ days','Credit / overpayment','Settled'];summary.getRange('A6:A12').values=buckets.map(x=>[x]);summary.getRange('B6:B12').formulas=buckets.map((x,i)=>[`=SUMIF(Payables!G6:G${n},A${i+6},Payables!E6:E${n})`]);summary.getRange('A14:A17').values=[['Open payables'],['Negative stock positions'],['Unresolved actions'],['AP reconciliation difference']];summary.getRange('B14:B17').formulas=[[`=SUM(B6:B12)`],[`=COUNTIF(Inventory!C6:C${sn},"<0")`],[`=COUNTIF(Actions!F6:F${an},"Open")`],[`=SUM(Payables!H6:H${n})`]];summary.getRange('A20').values=[['Review invoices over 90 days overdue, then investigate negative inventory.']];summary.getRange('A22').values=[['Refresh: rerun the Python pipeline, then regenerate this snapshot workbook.']];style(summary,23,'J');summary.getRange('A:A').format.columnWidth=36;summary.getRange('B6:B14').setNumberFormat('#,##0.00;(#,##0.00);"-"');summary.getRange('A14:B14').format.font.bold=true;
+const chart=summary.charts.add('bar',summary.getRange('A5:B10'));chart.title='Unpaid invoices by age (CAD)';chart.hasLegend=false;chart.setPosition('D5','K18');chart.yAxis={numberFormatCode:'#,##0',numberFormatSourceLinked:false};
+wb.recalculate();
+console.log((await wb.inspect({kind:'table',range:'Review!A14:B17',include:'values,formulas',tableMaxRows:4,tableMaxCols:2})).ndjson);
+console.log((await wb.inspect({kind:'match',searchTerm:'#REF!|#DIV/0!|#VALUE!|#NAME\\?|#NUM!',options:{useRegex:true,maxResults:10}})).ndjson);
+await fs.mkdir(root+'/docs/screenshots',{recursive:true});
+for(const [name,range] of [['Review','A1:K23'],['Payables','A1:H15'],['Inventory','A1:G15'],['Actions','A1:G12']]){const img=await wb.render({sheetName:name,range,scale:1.5,format:'png'});await fs.writeFile(root+'/docs/screenshots/excel-'+name.toLowerCase()+'.png',new Uint8Array(await img.arrayBuffer()));}
+await (await SpreadsheetFile.exportXlsx(wb)).save(root+'/excel/ERP_Operations_Review.xlsx');

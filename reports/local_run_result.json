@@ -1,0 +1,50 @@
+{
+  "run_id": "7b3be5edf4475c1b82ac",
+  "as_of": "2025-12-31",
+  "status": "needs_review",
+  "source": "synthetic ERP-style extracts",
+  "output_folder": "C:\\Users\\monst\\Documents\\Codex\\2026-11-06\\make\\outputs\\analyst-projects\\erp-data-process-automation\\reports\\runs\\7b3be5edf4475c1b82ac",
+  "source_counts": {
+    "Vendors": {
+      "raw": 12,
+      "accepted": 12,
+      "rejected": 0
+    },
+    "Items": {
+      "raw": 24,
+      "accepted": 24,
+      "rejected": 0
+    },
+    "Invoices": {
+      "raw": 604,
+      "accepted": 600,
+      "rejected": 4
+    },
+    "Payments": {
+      "raw": 457,
+      "accepted": 456,
+      "rejected": 1
+    },
+    "PurchaseOrders": {
+      "raw": 360,
+      "accepted": 360,
+      "rejected": 0
+    },
+    "InventoryMovements": {
+      "raw": 1801,
+      "accepted": 1801,
+      "rejected": 0
+    }
+  },
+  "quality_exception_count": 5,
+  "negative_stock_positions": 6,
+  "checks": {
+    "source_row_accounting": true,
+    "ap_reconciliation": true,
+    "aging_reconciliation": true,
+    "inventory_reconciliation": true,
+    "monthly_invoice_reconciliation": true,
+    "delivery_numerator_bounded": true
+  },
+  "reused": false
+}

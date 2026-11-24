@@ -1,0 +1,36 @@
+{
+  "captured_at": "2026-11-24T18:10:26.598989+00:00",
+  "source": "Actual reports/dashboard.html browser render",
+  "recording": "Automated browser walkthrough, not manual development footage",
+  "page_errors": [],
+  "screenshots": [
+    {
+      "file": "dashboard.png",
+      "sha256": "f1c8926afcea683076ef201eb4e67ef755259e0c76b51c090536333f257354e7"
+    },
+    {
+      "file": "filtered.png",
+      "sha256": "f1c8926afcea683076ef201eb4e67ef755259e0c76b51c090536333f257354e7"
+    },
+    {
+      "file": "detail-1.png",
+      "sha256": "f1c8926afcea683076ef201eb4e67ef755259e0c76b51c090536333f257354e7"
+    },
+    {
+      "file": "detail-2.png",
+      "sha256": "5681f609674a0dc95ec5710585fe1ab1d7838f715cdd740ba54a0f47838c0bd8"
+    },
+    {
+      "file": "detail-3.png",
+      "sha256": "7d264a258725f8a8c348da7fad8ec0bbbbde67b286d68949a70da9c607edc289"
+    },
+    {
+      "file": "detail-4.png",
+      "sha256": "24b8ffe18cd28ba9aebe52332c435f5b150812fed2d7d0978123df78dde5c2d8"
+    },
+    {
+      "file": "detail-5.png",
+      "sha256": "2c902d254f5fc982f03e5676fd372393d2274ce435d697cbcf7dd37047491f20"
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+Source,Line,RecordID,Reason,RawRecord
+invoices,602,INV00001,Exact duplicate,"{""InvoiceID"": ""INV00001"", ""VendorID"": ""V008"", ""PostingDate"": ""2025-09-17"", ""DueDate"": ""2025-10-17"", ""AmountCents"": ""900408""}"
+invoices,603,BAD_VENDOR,Unknown VendorID,"{""InvoiceID"": ""BAD_VENDOR"", ""VendorID"": ""V999"", ""PostingDate"": ""2025-11-01"", ""DueDate"": ""2025-12-01"", ""AmountCents"": ""45000""}"
+invoices,604,BAD_DATE,Due before posting,"{""InvoiceID"": ""BAD_DATE"", ""VendorID"": ""V001"", ""PostingDate"": ""2025-10-01"", ""DueDate"": ""2025-09-01"", ""AmountCents"": ""65000""}"
+invoices,605,BAD_AMOUNT,Invalid or missing AmountCents,"{""InvoiceID"": ""BAD_AMOUNT"", ""VendorID"": ""V002"", ""PostingDate"": ""2025-11-01"", ""DueDate"": ""2025-12-01"", ""AmountCents"": """"}"
+payments,458,PAY_ORPHAN,Unknown InvoiceID,"{""PaymentID"": ""PAY_ORPHAN"", ""InvoiceID"": ""INV_UNKNOWN"", ""PaymentDate"": ""2025-12-01"", ""AmountCents"": ""12000""}"
